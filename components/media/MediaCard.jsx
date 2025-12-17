@@ -10,7 +10,7 @@ import { getImageUrl } from "@/services/tmdb";
  * @param {{ item: any }} props
  * item can be Movie or Show: expects fields { id, title|name, poster_path, release_date|first_air_date, vote_average }
  */
-export default function MediaCard({ item }) {
+export default function MediaCard({ item, type }) {
   const title = item.title || item.name;
   const date = item.release_date || item.first_air_date || "";
   const year = date ? new Date(date).getFullYear() : "—";
@@ -19,9 +19,12 @@ export default function MediaCard({ item }) {
       ? item.vote_average.toFixed(1)
       : "N/A";
   const poster = getImageUrl(item.poster_path, "w342");
+  const resolvedType =
+    type || item.media_type || (item.title ? "movie" : item.name ? "tv" : "movie");
+  const href = `/title/${item.id}${resolvedType ? `?type=${resolvedType}` : ""}`;
 
   return (
-    <Link href={`/title/${item.id}`} className="block">
+    <Link href={href} className="block">
       <Card className="overflow-hidden hover:shadow-sm transition-shadow">
         {poster ? (
           <div className="relative aspect-2/3">

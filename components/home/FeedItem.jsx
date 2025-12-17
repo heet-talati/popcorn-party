@@ -15,6 +15,7 @@ import { Star } from "lucide-react";
 export default function FeedItem({ item }) {
   // Title resolved from TMDB (async) or falls back to provided title/name/id
   const [fetchedTitle, setFetchedTitle] = useState(null);
+  const [fetchedType, setFetchedType] = useState(null);
   useEffect(() => {
     // `active` prevents setting state after unmount
     let active = true;
@@ -27,12 +28,14 @@ export default function FeedItem({ item }) {
         try {
           // Try movie details first
           const m = await mod.getMovieDetails(id);
+          if (active) setFetchedType("movie");
           if (active) setFetchedTitle(m?.title || null);
           return;
         } catch { }
         try {
           // If not a movie, try show details
           const tv = await mod.getShowDetails(id);
+          if (active) setFetchedType("tv");
           if (active) setFetchedTitle(tv?.name || null);
         } catch { }
       } catch { }
@@ -44,6 +47,7 @@ export default function FeedItem({ item }) {
   }, [item?.tmdbId]);
   const title = fetchedTitle || item.title || item.name || String(item.tmdbId);
   const hasRating = typeof item.rating === "number";
+  const linkType = item.mediaType || fetchedType || (item.title ? "movie" : "tv");
   return (
     <div className="text-sm">
       <span className="font-medium">{item.userName || item.userId}</span>{" "}
@@ -61,7 +65,7 @@ export default function FeedItem({ item }) {
         item.status
       )}{" "}
       <Link
-        href={`/title/${item.tmdbId}`}
+        href={`/title/${item.tmdbId}?type=${linkType}`}
         className="underline hover:no-underline"
       >
         {title}

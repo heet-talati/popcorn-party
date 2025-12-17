@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMovieDetails, getShowDetails, getImageUrl } from "@/services/tmdb";
@@ -16,6 +16,8 @@ import { useAuth } from "@/components/auth/AuthContext";
 export default function TitleDetailPage() {
     const params = useParams();
     const id = params?.id;
+    const searchParams = useSearchParams();
+    const queryType = searchParams?.get("type");
     const [data, setData] = useState(null);
     const [mediaType, setMediaType] = useState("movie");
     const [loading, setLoading] = useState(true);
@@ -35,25 +37,44 @@ export default function TitleDetailPage() {
             setLoading(true);
             setError("");
             try {
-                // Try movie first; if it fails, try tv
-                let d = await getMovieDetails(id);
-                setMediaType("movie");
-                setData(d);
-            } catch {
-                try {
-                    let d2 = await getShowDetails(id);
-                    setMediaType("tv");
-                    setData(d2);
-                } catch (e) {
-                    setError("Unable to fetch details.");
-                    setData(null);
+                // If caller provided ?type=, honor it first
+                if (queryType === "movie") {
+                    const d = await getMovieDetails(id);
+                    setMediaType("movie");
+                    setData(d);
+                    return;
                 }
+                if (queryType === "tv") {
+                    const d = await getShowDetails(id);
+                    setMediaType("tv");
+                    setData(d);
+                    return;
+                }
+
+                // No explicit type: try movie then tv
+                try {
+                    let d = await getMovieDetails(id);
+                    setMediaType("movie");
+                    setData(d);
+                } catch {
+                    try {
+                        let d2 = await getShowDetails(id);
+                        setMediaType("tv");
+                        setData(d2);
+                    } catch (e) {
+                        setError("Unable to fetch details.");
+                        setData(null);
+                    }
+                }
+            } catch (e) {
+                setError("Unable to fetch details.");
+                setData(null);
             } finally {
                 setLoading(false);
             }
         }
         if (id) run();
-    }, [id]);
+    }, [id, queryType]);
 
     useEffect(() => {
         if (status) {

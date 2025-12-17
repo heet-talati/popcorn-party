@@ -128,21 +128,15 @@
 /* Subtle vignette for dark mode to add depth without harming contrast */
 .dark body {
   background-color: var(--background);
-  background-image: radial-gradient(
-      1200px 600px at 50% -10%,
+  background-image: radial-gradient(1200px 600px at 50% -10%,
       oklch(0.18 0.02 95 / 0.12),
-      transparent 60%
-    ),
-    radial-gradient(
-      1000px 500px at 120% 10%,
+      transparent 60%),
+    radial-gradient(1000px 500px at 120% 10%,
       oklch(0.18 0.02 95 / 0.08),
-      transparent 65%
-    ),
-    radial-gradient(
-      900px 500px at -20% 20%,
+      transparent 65%),
+    radial-gradient(900px 500px at -20% 20%,
       oklch(0 0 0 / 0.1),
-      transparent 60%
-    );
+      transparent 60%);
   background-blend-mode: normal, normal, multiply;
   background-attachment: fixed;
 }
@@ -151,9 +145,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   /* Fix native select option colors in dark mode */
   .dark select,
   .dark select option,
@@ -161,27 +157,23 @@
     background-color: var(--popover);
     color: var(--popover-foreground);
   }
+
   /* Ensure the select itself has dark surface */
   .dark select {
     border-color: var(--border);
   }
+
   /* Light mode: subtle depth and atmosphere */
   :root body {
-    background-image: radial-gradient(
-        900px 480px at 50% -10%,
+    background-image: radial-gradient(900px 480px at 50% -10%,
         oklch(0.98 0.02 95 / 0.18),
-        transparent 60%
-      ),
-      radial-gradient(
-        1000px 520px at 120% 0%,
+        transparent 60%),
+      radial-gradient(1000px 520px at 120% 0%,
         oklch(0.98 0.02 95 / 0.12),
-        transparent 65%
-      ),
-      radial-gradient(
-        800px 480px at -20% 10%,
+        transparent 65%),
+      radial-gradient(800px 480px at -20% 10%,
         oklch(1 0 0 / 0.06),
-        transparent 60%
-      );
+        transparent 60%);
     background-blend-mode: normal, normal, multiply;
     background-attachment: fixed;
   }
@@ -202,12 +194,14 @@
   .shadow-interactive {
     transition: box-shadow 200ms ease, transform 200ms ease;
   }
+
   .btn-primary:hover,
   button[data-variant="default"]:hover,
   .shadow-interactive:hover {
     box-shadow: 0 2px 4px oklch(0 0 0 / 0.08), 0 10px 18px oklch(0 0 0 / 0.08);
     transform: translateY(-1px);
   }
+
   .btn-primary:active,
   button[data-variant="default"]:active,
   .shadow-interactive:active {

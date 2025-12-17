@@ -39,7 +39,7 @@ export default function Home() {
         (foundUser) => foundUser.uid !== user.uid && (foundUser.username || "").toLowerCase() === termTrimmed.toLowerCase()
       );
       setFriends(exact.slice(0, 10));
-    } 
+    }
     finally {
       setSearching(false);
     }
@@ -136,7 +136,7 @@ export default function Home() {
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 {rec.interestBased.slice(0, 6).map((movie) => (
-                  <Link key={movie.id} href={`/title/${movie.id}`} className="block">
+                  <Link key={movie.id} href={`/title/${movie.id}?type=movie`} className="block">
                     <div className="text-sm">
                       <span className="font-medium">{movie.title}</span>
                     </div>
@@ -167,7 +167,7 @@ export default function Home() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {rec.becauseYouWatched.slice(0, 6).map((movie) => (
-                  <Link key={movie.id} href={`/title/${movie.id}`} className="block">
+                  <Link key={movie.id} href={`/title/${movie.id}?type=movie`} className="block">
                     <div className="text-sm">
                       <span className="font-medium">{movie.title}</span>
                     </div>

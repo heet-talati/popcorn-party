@@ -34,7 +34,7 @@ export default function ResultsGrid({
         {items.map((item) => {
           const type =
             item.media_type || (item.title ? "movie" : item.name ? "tv" : "person");
-          return <MediaCard key={`${type}-${item.id}`} item={item} />;
+          return <MediaCard key={`${type}-${item.id}`} item={item} type={type} />;
         })}
         {items.length === 0 && (
           <p className="text-muted-foreground">No results match the filters.</p>

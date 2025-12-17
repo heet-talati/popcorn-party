@@ -42,8 +42,11 @@ export default function WatchlistItem({ item }) {
     `#${item?.tmdbId ?? "unknown"}`;
   const poster = getImageUrl(meta?.poster_path, "w342");
 
+  const linkType =
+    item?.mediaType || (meta?.title ? "movie" : meta?.name ? "tv" : "movie");
+
   return (
-    <Link href={`/title/${item?.tmdbId}`} className="block h-full">
+    <Link href={`/title/${item?.tmdbId}?type=${linkType}`} className="block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-sm">
         <div className="relative aspect-2/3 bg-muted">
           {poster ? (

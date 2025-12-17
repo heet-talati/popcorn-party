@@ -52,14 +52,18 @@ export default function HistoryItem({ item }) {
 		item?.mediaType === "tv"
 			? "TV"
 			: item?.mediaType === "movie"
-			? "Movie"
-			: "Title";
+				? "Movie"
+				: "Title";
 	const hasRating = typeof item?.rating === "number";
+
+	const linkType =
+		item?.mediaType || (meta?.title ? "movie" : meta?.name ? "tv" : "movie");
+
 
 	return (
 		<div className="flex gap-3 rounded-lg border bg-card p-3 shadow-sm">
 			<Link
-				href={`/title/${item?.tmdbId}`}
+				href={`/title/${item?.tmdbId}?type=${linkType}`}
 				className="relative h-28 w-20 overflow-hidden rounded-md bg-muted"
 			>
 				{poster ? (
@@ -81,7 +85,7 @@ export default function HistoryItem({ item }) {
 				<div className="flex items-start justify-between gap-2">
 					<div className="space-y-1">
 						<Link
-							href={`/title/${item?.tmdbId}`}
+							href={`/title/${item?.tmdbId}?type=${linkType}`}
 							className="font-semibold hover:underline"
 						>
 							{title}
