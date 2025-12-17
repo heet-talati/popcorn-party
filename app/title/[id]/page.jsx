@@ -10,7 +10,7 @@ import PosterQuickInfo from "@/components/title/PosterQuickInfo";
 import ControlPanel from "@/components/title/ControlPanel";
 import CastList from "@/components/title/CastList";
 import useMediaStatus from "@/hooks/useMediaStatus";
-import { updateMediaStatus } from "@/services/activity";
+import { updateMediaStatus, removeMediaStatus } from "@/services/activity";
 import { useAuth } from "@/components/auth/AuthContext";
 
 export default function TitleDetailPage() {
@@ -81,6 +81,11 @@ export default function TitleDetailPage() {
             setLocalStatus(status.status || "watchlist");
             setLocalRating([typeof status.rating === "number" ? status.rating : 5]);
             setLocalReview(status.review || "");
+        } else {
+            // Reset to defaults when no status exists (e.g., after removal)
+            setLocalStatus("watchlist");
+            setLocalRating([5]);
+            setLocalReview("");
         }
     }, [status]);
 
@@ -104,20 +109,33 @@ export default function TitleDetailPage() {
 
     async function saveStatus() {
         if (!user) return;
-        const ratingNum = Number(localRating[0]);
-        // Only allow rating when marked as 'watched'
-        const safeRating =
-            localStatus === "watched" && Number.isFinite(ratingNum)
-                ? Math.min(10, Math.max(0, ratingNum))
-                : null;
-        const safeReview = (localReview || "").trim();
-        if (safeReview.length > 500) {
-            setSaveError("Review must be 500 characters or fewer.");
-            return;
-        }
         setSaving(true);
         setSaveError("");
+        
         try {
+            // Handle removal
+            if (localStatus === "remove") {
+                await removeMediaStatus(user.uid, id);
+                setSaved(true);
+                setTimeout(() => setSaved(false), 2000);
+                setSaving(false);
+                return;
+            }
+            
+            // Handle normal status updates
+            const ratingNum = Number(localRating[0]);
+            // Only allow rating when marked as 'watched'
+            const safeRating =
+                localStatus === "watched" && Number.isFinite(ratingNum)
+                    ? Math.min(10, Math.max(0, ratingNum))
+                    : null;
+            const safeReview = (localReview || "").trim();
+            if (safeReview.length > 500) {
+                setSaveError("Review must be 500 characters or fewer.");
+                setSaving(false);
+                return;
+            }
+            
             await updateMediaStatus({
                 userId: user.uid,
                 tmdbId: id,
@@ -129,6 +147,7 @@ export default function TitleDetailPage() {
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);
         } catch (e) {
+            console.error("Save error:", e);
             setSaveError("Failed to save. Please try again.");
         } finally {
             setSaving(false);

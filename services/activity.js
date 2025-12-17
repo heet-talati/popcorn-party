@@ -3,7 +3,7 @@
 // Document ID convention: `${userId}_${tmdbId}` for easy lookup
 
 import { db } from "@/lib/firebase";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 
 /**
  * Update or create a user's media status record.
@@ -64,4 +64,19 @@ export async function getUserMediaStatus(userId, tmdbId) {
     const ref = doc(db, "user_activity", id);
     const snap = await getDoc(ref);
     return snap.exists() ? snap.data() : null;
+}
+
+/**
+ * Remove a media title from the user's account.
+ * @param {string} userId - Firebase Auth UID
+ * @param {number|string} tmdbId - TMDb media id
+ * @returns {Promise<void>}
+ */
+export async function removeMediaStatus(userId, tmdbId) {
+    if (!userId) throw new Error("removeMediaStatus: userId is required");
+    if (!tmdbId) throw new Error("removeMediaStatus: tmdbId is required");
+
+    const id = `${userId}_${tmdbId}`;
+    const ref = doc(db, "user_activity", id);
+    await deleteDoc(ref);
 }

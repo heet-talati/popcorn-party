@@ -39,6 +39,9 @@ export default function ControlPanel({
               <option aria-label="watched" value="watched">
                 Watched
               </option>
+              <option aria-label="remove" value="remove">
+                Remove from Account
+              </option>
             </select>
           </div>
           <div className="space-y-2">
