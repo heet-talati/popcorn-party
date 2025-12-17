@@ -46,12 +46,15 @@ export default function FeedItem({ item }) {
     };
   }, [item?.tmdbId]);
   const title = fetchedTitle || item.title || item.name || String(item.tmdbId);
-  const hasRating = typeof item.rating === "number" && item.status !== "watchlist";
+  const hasRating = typeof item.rating === "number" && item.status !== "watchlist" && item.status !== "watching";
   const linkType = item.mediaType || fetchedType || (item.title ? "movie" : "tv");
   
   const getStatusText = () => {
     if (item.status === "watchlist") {
       return "has added";
+    }
+    if (item.status === "watching") {
+      return "is now watching";
     }
     return item.status;
   };
