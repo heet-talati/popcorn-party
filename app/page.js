@@ -6,7 +6,6 @@ import { useAuth } from "@/components/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import FeedItem from "@/components/home/FeedItem";
 import FriendRow from "@/components/home/FriendRow";
-import { toggleFollow } from "@/services/relationships";
 import { findUsersByUsername } from "@/services/relationships";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import useActivityFeed from "@/hooks/useActivityFeed";
@@ -21,6 +20,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [friends, setFriends] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
   async function doSearch(term) {
     if (!user) return;
@@ -34,20 +34,31 @@ export default function Home() {
     setSearching(true);
 
     try {
+      const searchLower = termTrimmed.toLowerCase();
       const res = await findUsersByUsername(termTrimmed);
-      const exact = res.filter(
-        (foundUser) => foundUser.uid !== user.uid && (foundUser.username || "").toLowerCase() === termTrimmed.toLowerCase()
+      const matches = res.filter(
+        (foundUser) => 
+          foundUser.uid !== user.uid && 
+          (foundUser.username || "").toLowerCase().includes(searchLower)
       );
-      setFriends(exact.slice(0, 10));
+      setFriends(matches.slice(0, 10));
     }
     finally {
       setSearching(false);
     }
   }
 
+  function handleSearchChange(value) {
+    setQuery(value);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    const timeout = setTimeout(() => { doSearch(value); }, 500);
+    setSearchTimeout(timeout);
+  }
+
   async function onToggleFollow(targetUid) {
-    if (!user) return;
-    await toggleFollow(user.uid, targetUid);
+    console.log("Follow state changed for user:", targetUid);
   }
 
   return (
@@ -76,10 +87,7 @@ export default function Home() {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  doSearch(e.target.value);
-                }}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by username..."
                 className="w-full border rounded px-3 py-2 text-sm"
               />
