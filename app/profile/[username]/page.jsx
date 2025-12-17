@@ -28,6 +28,7 @@ import {
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import HistoryItem from "@/components/profile/HistoryItem";
 import WatchlistItem from "@/components/profile/WatchlistItem";
+import WatchingItem from "@/components/profile/WatchingItem";
 
 export default function PublicProfilePage() {
   const { username } = useParams();
@@ -196,6 +197,13 @@ export default function PublicProfilePage() {
               History
             </Button>
             <Button
+              variant={tab === "watching" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTab("watching")}
+            >
+              Watching
+            </Button>
+            <Button
               variant={tab === "watchlist" ? "default" : "outline"}
               size="sm"
               onClick={() => setTab("watchlist")}
@@ -214,6 +222,18 @@ export default function PublicProfilePage() {
                 ))}
               {activity.filter((a) => a.status === "watched").length === 0 && (
                 <p className="text-muted-foreground">No watched history yet.</p>
+              )}
+            </section>
+          ) : tab === "watching" ? (
+            <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              {activity
+                .filter((a) => a.status === "watching")
+                .slice(0, 100)
+                .map((a) => (
+                  <WatchingItem key={a.id} item={a} />
+                ))}
+              {activity.filter((a) => a.status === "watching").length === 0 && (
+                <p className="text-muted-foreground">Not watching anything yet.</p>
               )}
             </section>
           ) : (
