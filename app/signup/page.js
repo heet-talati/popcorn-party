@@ -124,7 +124,7 @@ export default function SignUpPage() {
               required
               minLength={3}
               maxLength={20}
-              pattern="[a-zA-Z0-9_-]+"
+              pattern="[a-zA-Z0-9_\-]+"
               title="Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens"
             />
             {error && <p className="text-sm text-red-600">{error}</p>}
