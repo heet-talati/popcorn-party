@@ -11,21 +11,33 @@ import {
 
 export default function WatchlistItem({ item }) {
   const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     async function load() {
       const tmdbId = item?.tmdbId;
       if (!tmdbId) {
-        if (active) setMeta(null);
+        if (active) {
+          setMeta(null);
+          setLoading(false);
+        }
         return;
       }
+      if (active) setLoading(true);
       try {
         const fetcher = item?.mediaType === "tv" ? getShowDetails : getMovieDetails;
         const data = await fetcher(tmdbId);
-        if (active) setMeta(data || null);
-      } catch {
-        if (active) setMeta(null);
+        if (active) {
+          setMeta(data || null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error(`WatchlistItem: Failed to fetch ${item?.mediaType} ${tmdbId}:`, error);
+        if (active) {
+          setMeta(null);
+          setLoading(false);
+        }
       }
     }
     load();
@@ -60,7 +72,11 @@ export default function WatchlistItem({ item }) {
               loading="eager"
               className="object-cover"
             />
-          ) : null}
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-center text-xs text-muted-foreground p-2">
+              {loading ? "Loading..." : "No Image"}
+            </div>
+          )}
         </div>
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-semibold leading-snug line-clamp-2">

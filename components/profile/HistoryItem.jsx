@@ -29,7 +29,8 @@ export default function HistoryItem({ item }) {
 				const fetcher = item?.mediaType === "tv" ? getShowDetails : getMovieDetails;
 				const data = await fetcher(tmdbId);
 				if (active) setMeta(data || null);
-			} catch {
+			} catch (error) {
+				console.error(`HistoryItem: Failed to fetch ${item?.mediaType} ${tmdbId}:`, error);
 				if (active) setMeta(null);
 			}
 		}
