@@ -1,10 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/lib/firebase";
@@ -16,7 +13,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { getImageUrl, getMovieDetails, getShowDetails } from "@/services/tmdb";
 import { useAuth } from "@/components/auth/AuthContext";
 import {
   isFollowing,
