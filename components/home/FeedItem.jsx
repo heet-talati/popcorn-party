@@ -46,8 +46,16 @@ export default function FeedItem({ item }) {
     };
   }, [item?.tmdbId]);
   const title = fetchedTitle || item.title || item.name || String(item.tmdbId);
-  const hasRating = typeof item.rating === "number";
+  const hasRating = typeof item.rating === "number" && item.status !== "watchlist";
   const linkType = item.mediaType || fetchedType || (item.title ? "movie" : "tv");
+  
+  const getStatusText = () => {
+    if (item.status === "watchlist") {
+      return "has added";
+    }
+    return item.status;
+  };
+  
   return (
     <div className="text-sm">
       <span className="font-medium">{item.userName || item.userId}</span>{" "}
@@ -62,14 +70,15 @@ export default function FeedItem({ item }) {
           />{" "}
         </>
       ) : (
-        item.status
-      )}{" "}
+        getStatusText() + " "
+      )}
       <Link
         href={`/title/${item.tmdbId}?type=${linkType}`}
         className="underline hover:no-underline"
       >
         {title}
       </Link>
+      {item.status === "watchlist" && " to Watchlist"}
     </div>
   );
 }
