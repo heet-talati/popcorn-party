@@ -94,23 +94,21 @@ export async function getUsersByIds(uids) {
 }
 
 /**
- * Find users by username (exact or startsWith)
+ * Find users by username (case-insensitive contains search)
  * @param {string} username
  * @returns {Promise<Array<{uid:string, email:string, username:string}>>}
  */
 export async function findUsersByUsername(username) {
     if (!username) return [];
     const users = collection(db, "users");
-    // Prefix search: username >= term and username <= term + \uf8ff
-    const lower = username;
-    const upper = `${username}\uf8ff`;
-    const q = query(
-        users,
-        where("username", ">=", lower),
-        where("username", "<=", upper)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data());
+    const snap = await getDocs(users);
+    const searchLower = username.toLowerCase();
+    return snap.docs
+        .map((d) => d.data())
+        .filter((user) => 
+            user.username && 
+            user.username.toLowerCase().includes(searchLower)
+        );
 }
 
 /**
